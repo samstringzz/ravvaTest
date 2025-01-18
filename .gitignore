@@ -1,0 +1,23 @@
+
+node_modules/
+
+
+android/
+ios/
+build/
+dist/
+
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+.expo/
+.expo-shared/
+.idea/
+.vscode/
+.DS_Store
+
+# Environment variables
+.env
