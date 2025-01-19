@@ -50,13 +50,12 @@ const HomeScreen = () => {
           style={{ borderBottomColor: "rgba(17, 16, 16, 0.12)" }}
         >
           <View className="mt-5 flex-row justify-between">
-            <Text>For you</Text>
-            <TouchableOpacity
-            onPress={() => navigation.navigate("PostScreen")}
-          > 
-           <Text>post a post </Text>
-          </TouchableOpacity>
-           
+            <TouchableOpacity onPress={() => navigation.navigate('ExistingPostScreen')}>
+              <Text className="text-lg font-bold">For You</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('PostScreen')}>
+              <Text>Post a Post</Text>
+            </TouchableOpacity>
           </View>
         </View>
         <View

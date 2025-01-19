@@ -34,26 +34,23 @@ const CustomDropDownSelect: FC<Props> = ({
         control,
     });
 
-    const [isFocused, setIsFocused] = useState("")
     const [isVisible, setIsVisible] = useState(false);
 
     const handleSelect = (selectedOption: { value: string | number, label: string | number }) => {
         field.onChange(selectedOption.value);
         setValue(selectedOption.label);
         if (handleOnChange) {
-            handleOnChange(selectedOption.value)
+            handleOnChange(selectedOption.value);
         }
-        handleHide()
+        handleHide();
     }
 
     const handleShow = () => {
-        setIsVisible(true)
-        setIsFocused(name)
+        setIsVisible(true);
     }
 
     const handleHide = () => {
-        setIsVisible(false)
-        setIsFocused("")
+        setIsVisible(false);
     }
 
 
@@ -64,7 +61,7 @@ const CustomDropDownSelect: FC<Props> = ({
         <View className='space-y-1.5'>
             <TouchableOpacity
                 onPress={handleShow}
-                className={`border border-input-border-gray rounded-lg h-12 px-3 font-sr justify-between flex-row items-center ${isFocused === name ? styles.inputFocused : null}`}
+                className={`border border-input-border-gray rounded-lg h-12 px-3 justify-between flex-row items-center ${isVisible ? styles.inputFocused : null}`}
             >
                 <Text className={`font-sr ${!value && "text-[#0A4751] capitalize"}`}>{value || placeholder}</Text>
 
@@ -77,17 +74,13 @@ const CustomDropDownSelect: FC<Props> = ({
                 animationIn="slideInUp"
                 animationOut="slideOutDown"
                 style={{ margin: 0, bottom: 0 }}
-                backdropTransitionOutTiming={0}
-                hideModalContentWhileAnimating={true}
             >
-                <View className="w-full bg-white bottom-0 absolute rounded-t-2xl px-4 py-6 max-h-[50vh] space-y-4" >
+                <View className="w-full bg-white bottom-0 absolute rounded-t-2xl px-4 py-6 max-h-[50vh] space-y-4">
                     <Text className="font-sm">Select Option</Text>
 
                     <FlatList
                         data={options}
                         keyExtractor={(item) => item.value.toString()}
-                        showsVerticalScrollIndicator={false}
-                        ItemSeparatorComponent={() => (<View className="h-2" />)}
                         renderItem={({ item }) => (
                             <TouchableOpacity onPress={() => handleSelect(item)} className="h-12 bg-gray-bg rounded-lg px-3 justify-center items-center">
                                 <Text className="font-sr text-xs">{item.label}</Text>

@@ -101,8 +101,8 @@ export const serviceType = [
 ];
 
 export const storeType = [
-  { value: "restaurants", label: "Fitness" },
-  { value: "pharmacy", label: "Coaching" },
-  { value: "supermarket", label: "Football" },
-  { value: "liquor", label: "Sports" },
+  { label: 'Fitness', value: 'fitness' },
+  { label: 'Coaching', value: 'coaching' },
+  { label: 'Football', value: 'football' },
+  { label: 'Sports', value: 'sports' },
 ];

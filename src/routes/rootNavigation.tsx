@@ -13,6 +13,7 @@ import HomeScreen from "../screens/home/HomeScreen";
 import SearchScreen from "../screens/home/SearchScreen";
 import  BottomNavigator from "./bottomNavigator"
 import PostScreen from "../screens/home/PostScreen";
+import ExistingPostScreen from "../screens/home/ExistingPostsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,7 @@ const RootNavigation = () => {
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
         <Stack.Screen name="PostScreen" component={PostScreen} />
+        <Stack.Screen name="ExistingPostScreen" component={ExistingPostScreen} />
         <Stack.Screen name="Dashboard" component={MyTab} />
       </Stack.Navigator>
     </NavigationContainer>

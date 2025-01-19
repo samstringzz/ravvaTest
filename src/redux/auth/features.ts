@@ -4,6 +4,7 @@ import { handleErrors } from "../../helper/helpers";
 import { baseUrl } from "../../helper/baseurl";
 import { setAlert } from "../utils";
 import { setUser } from ".";
+import axiosInstance from '../../../axiosConfig';
 
 export const generateCode =
   (data: { email: string }) => async (dispatch: Dispatch) => {
@@ -74,58 +75,56 @@ export const updateUserProfile =
     }
   };
 
-  export const postScreen =
-  (data: any) => async (dispatch: Dispatch) => {
-    try {
-      const response = await axios.post(`${baseUrl.post}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data.data.id;
-    } catch (err) {
-      // Check if the error is an AxiosError
-      if (axios.isAxiosError(err)) {
-        // Log Axios-specific properties
-        console.error('Axios error:', err.response?.data || err.message);
-        console.error('Status code:', err.response?.status);
-        console.error('Headers:', err.response?.headers);
-      } else {
-        // General error logging if it's not an AxiosError
-        console.error('General error:', err);
-      }
+export const postScreen = (data: any) => async (dispatch: Dispatch) => {
+  try {
+    const response = await axiosInstance.post('/post.php', data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("Full Response from server:", response);
 
-      // Call your error handling function
-      handleErrors(err, dispatch);
-      
-      return false;
+    if (response.data && response.data.status === "success") {
+      console.log("Post submitted successfully:", response.data.message);
+      return response.data.message; // Return the message or handle it as needed
+    } else {
+      console.error("Unexpected response structure:", response.data);
+      throw new Error("Unexpected response structure");
     }
-  };
+  } catch (err) {
+    console.error("Error in postScreen action:", err.message);
+    if (err.response) {
+      console.error("Response data:", err.response.data);
+      console.error("Response status:", err.response.status);
+      console.error("Response headers:", err.response.headers);
+    }
+  }
+};
 
+export const fetchPosts = () => async (dispatch: Dispatch) => {
+  const endpoint = '/fetch_post.php'; // Ensure this matches your PHP script URL
+  console.log("Fetching posts from endpoint:", endpoint); // Log the endpoint
 
-  
+  try {
+    const response = await axiosInstance.get(endpoint); // Use the endpoint in the API call
+    console.log("Full response:", response); // Log the full response
 
-//   export const updatePassword =
-//   (data: {
-//     current_password: string;
-//     new_password: string;
-//     new_password_confirmation: string;
-//   }) =>
-//   async (dispatch: Dispatch) => {
-//     try {
-//       const response = await axios.post(
-//         `${baseUrl.password}`,
-//         data
-//       );
-//       dispatch(
-//         setAlert({
-//           msg: response.data.message,
-//           type: "success",
-//         })
-//       );
-//       return true;
-//     } catch (err: any) {
-//       handleErrors(err, dispatch);
-//       return false;
-//     }
-//   };
+    if (response.data.status === 'success') {
+      console.log("Fetched posts:", response.data.posts); // Log the fetched posts
+      return response.data.posts; // Return the posts data
+    } else {
+      console.error("Error fetching posts:", response.data.message);
+      dispatch(setAlert({ msg: response.data.message, type: "error" })); // Dispatch an alert if there's an error
+      throw new Error(response.data.message);
+    }
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    if (error.response) {
+      console.error("Response data:", error.response.data);
+      console.error("Response status:", error.response.status);
+      console.error("Response headers:", error.response.headers);
+    }
+    dispatch(setAlert({ msg: "Failed to fetch posts.", type: "error" })); // Dispatch an alert for the error
+    throw error; // Rethrow the error for handling in the component
+  }
+};

@@ -7,6 +7,7 @@ import {
   TextInput,
   PermissionsAndroid,
   Platform,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import box from "../../../assets/fi_x.png";
@@ -27,6 +28,7 @@ import mic from "../../../assets/mic.png";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { useAppDispatch } from "../../redux/store";
+import { postScreen } from "../../redux/auth/features";
 
 const PostScreen = () => {
   const navigation = useNavigation<any>();
@@ -35,7 +37,7 @@ const PostScreen = () => {
   const [textInput, setTextInput] = useState("");
   const [selectedMedia, setSelectedMedia] = useState<string[]>([]); // URIs
   const [loading, setLoading] = useState(false);
-
+  const dispatch = useAppDispatch();
 
   const takePhoto = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -94,6 +96,37 @@ const PostScreen = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    console.log("Selected Category:", selectedCategory);
+    console.log("Content:", textInput);
+
+    if (!selectedCategory || !textInput) {
+      Alert.alert("Error", "Please select a category and enter content.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("category", selectedCategory);
+    formData.append("content", textInput);
+    
+    // Append media files to the form data if any
+    selectedMedia.forEach((uri) => {
+      formData.append("media", {
+        uri,
+        name: uri.split('/').pop(), // Extract the file name
+        type: 'image/jpeg', // Adjust the type based on your media
+      });
+    });
+
+    try {
+      const result = await dispatch(postScreen(formData)); // Dispatch the formData
+      console.log("Post submitted successfully:", result);
+      navigation.navigate("HomeScreen");
+    } catch (error) {
+      console.error("Error submitting post:", error);
+    }
+  };
+
   return (
     <View className="flex-1">
       <View className="h-12 bg-white w-full" />
@@ -111,7 +144,7 @@ const PostScreen = () => {
               Exclusive Post
             </Text>
             <View className="w-[20%]">
-              <Button title="Post" variant="faded" />
+              <Button title="Post" variant="faded" onPress={handleSubmit} />
             </View>
           </View>
         </View>
@@ -131,6 +164,9 @@ const PostScreen = () => {
                 name={"store_type"}
                 control={control}
                 options={storeType}
+                handleOnChange={(value) => {
+                  setSelectedCategory(value);
+                }}
               />
             </View>
           </View>
@@ -145,6 +181,8 @@ const PostScreen = () => {
             }}
             placeholder="Type your message here..."
             multiline={true}
+            value={textInput}
+            onChangeText={setTextInput}
           />
 
           {selectedMedia.length > 0 && (
@@ -194,5 +232,5 @@ const PostScreen = () => {
 };
 
 export default PostScreen;
-
 const styles = StyleSheet.create({});
+
